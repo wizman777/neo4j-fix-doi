@@ -2,15 +2,15 @@ package org.rdswitchboard.utils.neo4j.doi;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Transaction;
 import org.neo4j.graphdb.factory.GraphDatabaseFactory;
-import org.neo4j.graphdb.factory.GraphDatabaseSettings;
-import org.rdswitchboard.utils.neo4j.sync.exceptions.Neo4jException;
 
 public class App {
 	
@@ -18,6 +18,10 @@ public class App {
 	
     private static final String PART_DOI_PERFIX = "doi:";
     private static final String PART_DOI_URI = "dx.doi.org/";
+    
+    private static final String DOI_REGEX = "\\d+(\\.\\d+)*/.+$";
+
+    private static final Pattern patternDoi = Pattern.compile(DOI_REGEX);
 
 	private static final String NEO4J_CONF = "/conf/neo4j.conf";
 	private static final String NEO4J_DB = "/data/databases/graph.db";
@@ -42,25 +46,6 @@ public class App {
 		
 		return conf;
 	}	
-	
-	private static GraphDatabaseService getReadOnlyGraphDb( final String graphDbPath ) throws Neo4jException {
-		if (StringUtils.isEmpty(graphDbPath))
-			throw new Neo4jException("Please provide path to an existing Neo4j instance");
-		
-		try {
-			GraphDatabaseService graphDb = new GraphDatabaseFactory()
-				.newEmbeddedDatabaseBuilder( GetDbPath(graphDbPath) )
-				.loadPropertiesFromFile( GetConfPath(graphDbPath).toString() )
-				.setConfig( GraphDatabaseSettings.read_only, "true" )
-				.newGraphDatabase();
-			
-			registerShutdownHook( graphDb );
-			
-			return graphDb;
-		} catch (Exception e) {
-			throw new Neo4jException("Unable to open Neo4j instance located at: " + graphDbPath + ". Error: " + e.getMessage());
-		}
-	}
 	
 	private static GraphDatabaseService getGraphDb( final String graphDbPath ) throws Neo4jException {
 		if (StringUtils.isEmpty(graphDbPath))
@@ -133,8 +118,8 @@ public class App {
 							}
 							
 						} else if (doi instanceof String[]) {
-							String[] _doi = Arrays.stream((String)[] doi)
-									.map((doi) -> extractDoi(doi))
+							String[] _doi = Arrays.stream((String[]) doi)
+									.map((d) -> extractDoi(d))
 									.toArray(String[]::new);
 							
 							if (null != _doi && !_doi.equals(doi)) {
