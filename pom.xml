@@ -10,9 +10,7 @@
     <class.path>jars/</class.path>
     <jdk.version>1.8</jdk.version>
     <junit.version>4.11</junit.version>
-    <commons.io.version>2.4</commons.io.version>
     <commons.lang.version>2.6</commons.lang.version>
-    <aws-java-sdk.version>1.9.39</aws-java-sdk.version>
     <neo4j.version>3.0.6</neo4j.version>
   </properties>
   
@@ -70,16 +68,6 @@
 	  <version>${commons.lang.version}</version>
     </dependency>  
     <dependency>
-      <groupId>commons-io</groupId>
-      <artifactId>commons-io</artifactId>
-      <version>${commons.io.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>com.amazonaws</groupId>
-      <artifactId>aws-java-sdk</artifactId>
-      <version>${aws-java-sdk.version}</version>
-    </dependency> 
-     <dependency>
       <groupId>org.neo4j</groupId>
       <artifactId>neo4j</artifactId>
       <version>${neo4j.version}</version>
